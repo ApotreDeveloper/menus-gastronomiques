@@ -1274,6 +1274,37 @@ function QuoteForm() {
                   </div>
                 </div>
 
+                {(() => {
+                  const { low, high } = estimateQuote(
+                    Number(form.pages),
+                    form.format,
+                  );
+                  return (
+                    <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-[#FF2E9A]/10 via-white/[0.03] to-[#8B5CF6]/10 p-6 sm:p-7">
+                      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                          <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-[0.2em] text-[color:var(--color-fog)]">
+                            <Sparkles className="h-3.5 w-3.5 text-[#FF2E9A]" />
+                            Estimation indicative
+                          </div>
+                          <p className="mt-2 text-xs text-[color:var(--color-fog)]">
+                            Fourchette calculée à partir du format et du nombre
+                            de pages. Devis final ajusté selon vos besoins.
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <div className="font-display text-2xl font-semibold sm:text-3xl">
+                            <span className="text-gradient">
+                              {fcfa(low)} — {fcfa(high)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
+
+
                 <div className="flex flex-col items-center gap-4 pt-4 sm:flex-row sm:justify-between">
                   <p className="text-xs text-[color:var(--color-fog)]">
                     Vos informations restent strictement confidentielles.
