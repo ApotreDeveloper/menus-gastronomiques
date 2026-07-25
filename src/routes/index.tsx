@@ -1059,22 +1059,39 @@ const ETABLISSEMENTS = [
   "Autre",
 ];
 
-const FORMATS = [
-  "A4 (21 × 29,7 cm)",
-  "A5 (14,8 × 21 cm)",
-  "Carré (21 × 21 cm)",
-  "Long / DL (10 × 21 cm)",
-  "Livret plié",
-  "Format personnalisé",
+const FORMATS: { label: string; multiplier: number }[] = [
+  { label: "A4 (21 × 29,7 cm)", multiplier: 1.2 },
+  { label: "A5 (14,8 × 21 cm)", multiplier: 1 },
+  { label: "Carré (21 × 21 cm)", multiplier: 1.15 },
+  { label: "Long / DL (10 × 21 cm)", multiplier: 1.05 },
+  { label: "Livret plié", multiplier: 1.35 },
+  { label: "Format personnalisé", multiplier: 1.5 },
 ];
+
+const BASE_PRICE_PER_PAGE = 12000; // FCFA
+const SETUP_FEE = 25000;
+
+function estimateQuote(pages: number, formatLabel: string) {
+  const fmt = FORMATS.find((f) => f.label === formatLabel) ?? FORMATS[0];
+  const safePages = Math.min(Math.max(pages || 1, 1), 200);
+  const base = SETUP_FEE + safePages * BASE_PRICE_PER_PAGE * fmt.multiplier;
+  const low = Math.round((base * 0.85) / 1000) * 1000;
+  const high = Math.round((base * 1.2) / 1000) * 1000;
+  return { low, high };
+}
+
+const fcfa = (n: number) =>
+  new Intl.NumberFormat("fr-FR").format(n) + " FCFA";
+
 
 function QuoteForm() {
   const [form, setForm] = useState({
     nom: "",
     etablissement: ETABLISSEMENTS[0],
     pages: "4",
-    format: FORMATS[0],
+    format: FORMATS[0].label,
     email: "",
+
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [sent, setSent] = useState(false);
@@ -1227,10 +1244,11 @@ function QuoteForm() {
                       className={inputCls}
                     >
                       {FORMATS.map((o) => (
-                        <option key={o} value={o} className="bg-[#12131D]">
-                          {o}
+                        <option key={o.label} value={o.label} className="bg-[#12131D]">
+                          {o.label}
                         </option>
                       ))}
+
                     </select>
                   </div>
 
@@ -1255,6 +1273,37 @@ function QuoteForm() {
                     )}
                   </div>
                 </div>
+
+                {(() => {
+                  const { low, high } = estimateQuote(
+                    Number(form.pages),
+                    form.format,
+                  );
+                  return (
+                    <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-[#FF2E9A]/10 via-white/[0.03] to-[#8B5CF6]/10 p-6 sm:p-7">
+                      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                          <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-[0.2em] text-[color:var(--color-fog)]">
+                            <Sparkles className="h-3.5 w-3.5 text-[#FF2E9A]" />
+                            Estimation indicative
+                          </div>
+                          <p className="mt-2 text-xs text-[color:var(--color-fog)]">
+                            Fourchette calculée à partir du format et du nombre
+                            de pages. Devis final ajusté selon vos besoins.
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <div className="font-display text-2xl font-semibold sm:text-3xl">
+                            <span className="text-gradient">
+                              {fcfa(low)} — {fcfa(high)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
+
 
                 <div className="flex flex-col items-center gap-4 pt-4 sm:flex-row sm:justify-between">
                   <p className="text-xs text-[color:var(--color-fog)]">
