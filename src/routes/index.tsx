@@ -1147,6 +1147,7 @@ function Portfolio() {
       <Testimonials />
       <Faq />
       <CTA />
+      <QuoteForm />
       <Footer />
     </main>
   );
