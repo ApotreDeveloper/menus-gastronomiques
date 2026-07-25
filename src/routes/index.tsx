@@ -1304,6 +1304,49 @@ function QuoteForm() {
                   );
                 })()}
 
+                {(() => {
+                  const { low, high } = estimateQuote(
+                    Number(form.pages),
+                    form.format,
+                  );
+                  return (
+                    <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 sm:p-7">
+                      <div className="mb-4 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--color-fog)]">
+                        <Eye className="h-4 w-4 text-[#FF2E9A]" />
+                        Récapitulatif de votre demande
+                      </div>
+                      <div className="grid gap-4 sm:grid-cols-3">
+                        <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+                          <p className="text-xs uppercase tracking-wide text-[color:var(--color-fog)]">
+                            Format
+                          </p>
+                          <p className="mt-1 text-sm font-semibold text-white">
+                            {form.format}
+                          </p>
+                        </div>
+                        <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+                          <p className="text-xs uppercase tracking-wide text-[color:var(--color-fog)]">
+                            Nombre de pages
+                          </p>
+                          <p className="mt-1 text-sm font-semibold text-white">
+                            {form.pages}
+                          </p>
+                        </div>
+                        <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+                          <p className="text-xs uppercase tracking-wide text-[color:var(--color-fog)]">
+                            Fourchette indicative
+                          </p>
+                          <p className="mt-1 text-sm font-semibold text-white">
+                            {fcfa(low)} — {fcfa(high)}
+                          </p>
+                        </div>
+                      </div>
+                      <p className="mt-4 text-xs text-[color:var(--color-fog)]">
+                        Vérifiez ces informations avant de valider votre envoi.
+                      </p>
+                    </div>
+                  );
+                })()}
 
                 <div className="flex flex-col items-center gap-4 pt-4 sm:flex-row sm:justify-between">
                   <p className="text-xs text-[color:var(--color-fog)]">
