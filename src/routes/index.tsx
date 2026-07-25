@@ -1030,7 +1030,7 @@ function CTA() {
         <Reveal delay={0.3}>
           <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
             <a
-              href="#"
+              href="#devis-form"
               className="group relative inline-flex items-center gap-3 overflow-hidden rounded-full bg-gradient-to-r from-[#FF2E9A] to-[#8B5CF6] px-9 py-5 text-base font-semibold text-white shadow-[0_20px_60px_-10px_rgba(255,46,154,0.7)] transition-all hover:shadow-[0_30px_80px_-10px_rgba(255,46,154,0.9)]"
             >
               Demander un devis
@@ -1045,8 +1045,243 @@ function CTA() {
 }
 
 /* ------------------------------------------------------------------ */
+/*  Quote form                                                         */
+/* ------------------------------------------------------------------ */
+
+const ETABLISSEMENTS = [
+  "Restaurant",
+  "Hôtel",
+  "Maquis",
+  "Café",
+  "Pâtisserie",
+  "Bar",
+  "Lounge",
+  "Autre",
+];
+
+const FORMATS = [
+  "A4 (21 × 29,7 cm)",
+  "A5 (14,8 × 21 cm)",
+  "Carré (21 × 21 cm)",
+  "Long / DL (10 × 21 cm)",
+  "Livret plié",
+  "Format personnalisé",
+];
+
+function QuoteForm() {
+  const [form, setForm] = useState({
+    nom: "",
+    etablissement: ETABLISSEMENTS[0],
+    pages: "4",
+    format: FORMATS[0],
+    email: "",
+  });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [sent, setSent] = useState(false);
+
+  function update<K extends keyof typeof form>(key: K, value: string) {
+    setForm((f) => ({ ...f, [key]: value }));
+  }
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const errs: Record<string, string> = {};
+    if (!form.nom.trim()) errs.nom = "Veuillez indiquer votre nom.";
+    if (!/^\S+@\S+\.\S+$/.test(form.email))
+      errs.email = "Adresse e-mail invalide.";
+    const p = Number(form.pages);
+    if (!Number.isFinite(p) || p < 1 || p > 200)
+      errs.pages = "Entre 1 et 200 pages.";
+    setErrors(errs);
+    if (Object.keys(errs).length === 0) setSent(true);
+  }
+
+  const inputCls =
+    "w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-white placeholder-white/40 outline-none transition focus:border-[#FF2E9A]/60 focus:bg-white/[0.07] focus:ring-2 focus:ring-[#FF2E9A]/30";
+  const labelCls =
+    "mb-2 block text-xs font-medium uppercase tracking-[0.15em] text-[color:var(--color-fog)]";
+
+  return (
+    <section id="devis-form" className="relative py-32">
+      <div className="pointer-events-none absolute inset-0 -z-10 opacity-70">
+        <div
+          className="absolute -left-40 top-20 h-[500px] w-[500px] rounded-full"
+          style={{
+            background:
+              "radial-gradient(closest-side, rgba(139,92,246,0.25), transparent 70%)",
+            filter: "blur(60px)",
+          }}
+        />
+        <div
+          className="absolute -right-32 bottom-0 h-[500px] w-[500px] rounded-full"
+          style={{
+            background:
+              "radial-gradient(closest-side, rgba(255,46,154,0.25), transparent 70%)",
+            filter: "blur(60px)",
+          }}
+        />
+      </div>
+
+      <div className="mx-auto max-w-4xl px-5 sm:px-8">
+        <Reveal>
+          <div className="mb-14 text-center">
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.2em] text-[color:var(--color-fog)]">
+              <Sparkles className="h-3.5 w-3.5 text-[#FF2E9A]" />
+              Formulaire de devis
+            </span>
+            <h2 className="mt-6 font-display text-[clamp(2rem,5vw,3.75rem)] font-semibold leading-[1.05] tracking-tight">
+              Parlez-nous de votre{" "}
+              <span className="text-gradient italic">projet de menu</span>
+            </h2>
+            <p className="mx-auto mt-5 max-w-xl text-base text-[color:var(--color-fog)]">
+              Remplissez ce formulaire, nous revenons vers vous sous 24 heures
+              avec une proposition personnalisée.
+            </p>
+          </div>
+        </Reveal>
+
+        <Reveal delay={0.15}>
+          <div className="glass relative overflow-hidden rounded-3xl p-8 sm:p-12">
+            {sent ? (
+              <div className="flex flex-col items-center justify-center py-12 text-center">
+                <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-[#FF2E9A] to-[#8B5CF6] glow-pink">
+                  <Sparkles className="h-8 w-8 text-white" />
+                </div>
+                <h3 className="font-display text-3xl font-semibold">
+                  Merci, votre demande est envoyée.
+                </h3>
+                <p className="mt-4 max-w-md text-[color:var(--color-fog)]">
+                  Notre équipe vous contactera très prochainement à l’adresse{" "}
+                  <span className="text-white">{form.email}</span>.
+                </p>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} noValidate className="space-y-6">
+                <div className="grid gap-6 sm:grid-cols-2">
+                  <div>
+                    <label htmlFor="nom" className={labelCls}>
+                      Nom complet
+                    </label>
+                    <input
+                      id="nom"
+                      type="text"
+                      autoComplete="name"
+                      maxLength={80}
+                      value={form.nom}
+                      onChange={(e) => update("nom", e.target.value)}
+                      placeholder="Jean Dupont"
+                      className={inputCls}
+                    />
+                    {errors.nom && (
+                      <p className="mt-2 text-sm text-[#FF2E9A]">{errors.nom}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label htmlFor="email" className={labelCls}>
+                      Adresse e-mail
+                    </label>
+                    <input
+                      id="email"
+                      type="email"
+                      autoComplete="email"
+                      maxLength={120}
+                      value={form.email}
+                      onChange={(e) => update("email", e.target.value)}
+                      placeholder="vous@restaurant.com"
+                      className={inputCls}
+                    />
+                    {errors.email && (
+                      <p className="mt-2 text-sm text-[#FF2E9A]">
+                        {errors.email}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label htmlFor="etablissement" className={labelCls}>
+                      Type d’établissement
+                    </label>
+                    <select
+                      id="etablissement"
+                      value={form.etablissement}
+                      onChange={(e) => update("etablissement", e.target.value)}
+                      className={inputCls}
+                    >
+                      {ETABLISSEMENTS.map((o) => (
+                        <option key={o} value={o} className="bg-[#12131D]">
+                          {o}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label htmlFor="format" className={labelCls}>
+                      Format souhaité
+                    </label>
+                    <select
+                      id="format"
+                      value={form.format}
+                      onChange={(e) => update("format", e.target.value)}
+                      className={inputCls}
+                    >
+                      {FORMATS.map((o) => (
+                        <option key={o} value={o} className="bg-[#12131D]">
+                          {o}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label htmlFor="pages" className={labelCls}>
+                      Nombre de pages
+                    </label>
+                    <input
+                      id="pages"
+                      type="number"
+                      min={1}
+                      max={200}
+                      value={form.pages}
+                      onChange={(e) => update("pages", e.target.value)}
+                      placeholder="Ex. 8"
+                      className={inputCls}
+                    />
+                    {errors.pages && (
+                      <p className="mt-2 text-sm text-[#FF2E9A]">
+                        {errors.pages}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex flex-col items-center gap-4 pt-4 sm:flex-row sm:justify-between">
+                  <p className="text-xs text-[color:var(--color-fog)]">
+                    Vos informations restent strictement confidentielles.
+                  </p>
+                  <button
+                    type="submit"
+                    className="group relative inline-flex items-center gap-3 overflow-hidden rounded-full bg-gradient-to-r from-[#FF2E9A] to-[#8B5CF6] px-8 py-4 text-sm font-semibold text-white shadow-[0_20px_60px_-10px_rgba(255,46,154,0.7)] transition-all hover:shadow-[0_30px_80px_-10px_rgba(255,46,154,0.9)]"
+                  >
+                    Envoyer ma demande
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+/* ------------------------------------------------------------------ */
 /*  Footer                                                             */
 /* ------------------------------------------------------------------ */
+
+
 
 function Footer() {
   return (
@@ -1147,6 +1382,7 @@ function Portfolio() {
       <Testimonials />
       <Faq />
       <CTA />
+      <QuoteForm />
       <Footer />
     </main>
   );
