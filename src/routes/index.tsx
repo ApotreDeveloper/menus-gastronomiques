@@ -1089,8 +1089,9 @@ function QuoteForm() {
     nom: "",
     etablissement: ETABLISSEMENTS[0],
     pages: "4",
-    format: FORMATS[0],
+    format: FORMATS[0].label,
     email: "",
+
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [sent, setSent] = useState(false);
