@@ -1030,7 +1030,7 @@ function CTA() {
         <Reveal delay={0.3}>
           <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
             <a
-              href="#"
+              href="#devis-form"
               className="group relative inline-flex items-center gap-3 overflow-hidden rounded-full bg-gradient-to-r from-[#FF2E9A] to-[#8B5CF6] px-9 py-5 text-base font-semibold text-white shadow-[0_20px_60px_-10px_rgba(255,46,154,0.7)] transition-all hover:shadow-[0_30px_80px_-10px_rgba(255,46,154,0.9)]"
             >
               Demander un devis
