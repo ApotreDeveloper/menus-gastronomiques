@@ -1059,14 +1059,30 @@ const ETABLISSEMENTS = [
   "Autre",
 ];
 
-const FORMATS = [
-  "A4 (21 × 29,7 cm)",
-  "A5 (14,8 × 21 cm)",
-  "Carré (21 × 21 cm)",
-  "Long / DL (10 × 21 cm)",
-  "Livret plié",
-  "Format personnalisé",
+const FORMATS: { label: string; multiplier: number }[] = [
+  { label: "A4 (21 × 29,7 cm)", multiplier: 1.2 },
+  { label: "A5 (14,8 × 21 cm)", multiplier: 1 },
+  { label: "Carré (21 × 21 cm)", multiplier: 1.15 },
+  { label: "Long / DL (10 × 21 cm)", multiplier: 1.05 },
+  { label: "Livret plié", multiplier: 1.35 },
+  { label: "Format personnalisé", multiplier: 1.5 },
 ];
+
+const BASE_PRICE_PER_PAGE = 12000; // FCFA
+const SETUP_FEE = 25000;
+
+function estimateQuote(pages: number, formatLabel: string) {
+  const fmt = FORMATS.find((f) => f.label === formatLabel) ?? FORMATS[0];
+  const safePages = Math.min(Math.max(pages || 1, 1), 200);
+  const base = SETUP_FEE + safePages * BASE_PRICE_PER_PAGE * fmt.multiplier;
+  const low = Math.round((base * 0.85) / 1000) * 1000;
+  const high = Math.round((base * 1.2) / 1000) * 1000;
+  return { low, high };
+}
+
+const fcfa = (n: number) =>
+  new Intl.NumberFormat("fr-FR").format(n) + " FCFA";
+
 
 function QuoteForm() {
   const [form, setForm] = useState({
