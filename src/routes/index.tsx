@@ -1244,10 +1244,11 @@ function QuoteForm() {
                       className={inputCls}
                     >
                       {FORMATS.map((o) => (
-                        <option key={o} value={o} className="bg-[#12131D]">
-                          {o}
+                        <option key={o.label} value={o.label} className="bg-[#12131D]">
+                          {o.label}
                         </option>
                       ))}
+
                     </select>
                   </div>
 
